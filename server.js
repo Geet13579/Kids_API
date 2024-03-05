@@ -67,7 +67,7 @@ Api.post('/request-time-extension',authenticate, (req, res) => {
                 return;
             }
             else{
-                res.send("Record inserted successfully");
+                res.send({msg:"Record inserted successfully"});
             }
           
         
@@ -75,23 +75,46 @@ Api.post('/request-time-extension',authenticate, (req, res) => {
     });
 });
 
-Api.post('/approve-reject-request',authenticate, (req, res) => {
+Api.post('/approve-reject-request', authenticate, (req, res) => {
     const { kidId, status } = req.body;
 
-
     let update = 'UPDATE kid_table SET status = ? WHERE kidId = ?';
+
+    
     db.run(update, [status, kidId], (err) => {
         if (err) {
             console.error(err.message);
             res.status(500).send({ msg: "error" });
             return;
         }
-        else{
-            res.send({ msg: "Request updated successfully" });
-        }
-       
+
+        let select = 'SELECT * FROM kid_table WHERE kidId = ?';
+        db.get(select, [kidId], (err, row) => {
+            if (err) {
+                console.error(err.message);
+                res.status(500).send({ msg: "error" });
+                return;
+            }
+
+            res.send({ msg: "Request updated successfully", data: row });
+        });
     });
 });
+
+
+Api.get('/request-time-extension/all', authenticate, (req, res) => {
+
+    db.all('SELECT * FROM kid_table', (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).send({ msg: "error" });
+            return;
+        }
+
+        res.send(rows);
+    });
+});
+
 
 Api.get('/', (req, res) => {
 
