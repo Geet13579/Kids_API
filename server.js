@@ -67,7 +67,7 @@ Api.post('/request-time-extension',authenticate, (req, res) => {
                 return;
             }
             else{
-                req.send("Record inserted successfully");
+                res.send("Record inserted successfully");
             }
           
         
