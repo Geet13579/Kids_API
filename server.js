@@ -2,6 +2,8 @@
 const http = require('http');
 const express = require('express');
 const { SIGTERM } = require("constants");
+const authenticate = require('./middleware');
+
 
 var cors = require('cors');
 const Api = express();
@@ -35,7 +37,7 @@ const db = new sqlite3.Database('./KidData.db', (err) => {
     }
 });
 
-Api.post('/request-time-extension', (req, res) => {
+Api.post('/request-time-extension',authenticate, (req, res) => {
 
     const { additionalTime, reason } = req.body;
 
@@ -73,7 +75,7 @@ Api.post('/request-time-extension', (req, res) => {
     });
 });
 
-Api.post('/approve-reject-request', (req, res) => {
+Api.post('/approve-reject-request',authenticate, (req, res) => {
     const { kidId, status } = req.body;
 
 
